@@ -8,7 +8,7 @@ import com.mongodb.casbah.Imports._
 import se.radley.plugin.salat._
 import mongoContext._
 
-case class User(_id: ObjectId = new ObjectId(), 
+case class User(id: ObjectId = new ObjectId(), 
                 firstName: String,
                 lastName: String,
                 username: String,
@@ -23,6 +23,13 @@ object User extends ModelCompanion[User, ObjectId]{
       dao.findOne(MongoDBObject("username" -> username))
     }
 
+    def getUserEvents(username: String): List[Event] = {
+      val eventDao = new SalatDAO[Event, ObjectId](collection = mongoCollection("events")) {}
+      eventDao.find(MongoDBObject("user" -> MongoDBObject("username" -> username)))
+        .sort(orderBy = MongoDBObject("_id" -> -1))
+        .skip(1)
+        .limit(1)
+        .toList
+    }
 
-  
 }
