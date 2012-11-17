@@ -1,0 +1,15 @@
+@(userForm: Form[(String, String)])
+@import helper._
+
+@main("New User"){
+  <h2>Add a new user</h2>
+    
+  @form(routes.Application.newUser) {
+      
+      @inputText(userForm("username")) 
+      @inputText(userForm("password"))
+
+      <input type="submit" value="Create">
+      
+  }
+}
