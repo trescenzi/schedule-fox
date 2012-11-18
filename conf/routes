@@ -9,7 +9,7 @@ POST    /user                       controllers.UserController.newUser
 GET     /login                      controllers.UserController.login
 POST    /login                      controllers.UserController.verifyLogin
 GET     /event/new                  controllers.EventController.newEvent
-GET     /event                      controllers.EventController.events
+GET     /events                     controllers.EventController.events
 POST    /event                      controllers.EventController.postEvent
 
 # Map static resources from the /public folder to the /assets URL path

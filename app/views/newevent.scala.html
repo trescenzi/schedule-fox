@@ -3,12 +3,13 @@
 @import models._
 @import helper._
 
-@main("new event"){
+@main(creationError){
   
   <h2> Add a new event </h2>
-  @form(routes.EventController.newEvent) {
+  <h2> @user </h2>=
+  @form(routes.EventController.postEvent) {
       <fieldset>
-        <legend> Create a new account </legend>
+        <legend> Create a new event </legend>
           
           @inputText(
             eventForm("title"),
@@ -25,7 +26,7 @@
             '_label -> "Location:" 
           )
 
-          <input type="hidden" name="username" value="@user" />
+          <input type="hidden" id="user" name="user" value="@user" />
 
           @inputText(
             eventForm("tags"),

@@ -40,7 +40,7 @@ object Event extends ModelCompanion[Event, ObjectId] {
       .toList
   }
 
-  val dateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy")
+  val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy")
 
   def parseTags(tags: String): List[String] = {
     val split = tags.split(',')
