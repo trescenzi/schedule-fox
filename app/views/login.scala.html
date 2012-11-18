@@ -1,11 +1,11 @@
-@(loginForm: Form[(String,String)])
+@(loginForm: Form[(String,String)], loginError: String = "")
 @import helper._
 
 
 @main("Login"){
   <h2>Login</h2>
 
-  @form(routes.UserController.login) {
+  @form(routes.UserController.verifyLogin){
     <fieldset>
       @inputText(
         loginForm("username"), 

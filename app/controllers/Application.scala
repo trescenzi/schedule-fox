@@ -8,7 +8,7 @@ import play.api.data.Forms._
 
 object Application extends Controller {
 
-  def index = Action {
+  def index = Action {implicit request =>
     Ok(views.html.index("Your new application is ready."))
   }
   

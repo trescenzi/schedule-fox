@@ -13,11 +13,22 @@ object UserController extends Controller {
   }
 
   def login = Action{
-    Ok(views.html.login(User.login))
+    Ok(views.html.login(User.loginForm, ""))
   }
 
-  def verifyLogin = Action{
-    Ok(views.html.login(User.login))
+  def verifyLogin = Action{implicit request =>
+
+    User.loginForm.bindFromRequest.fold(
+      errors => BadRequest(views.html.login(errors, "")),
+      user => {
+        User.login(user._1, user._2) match{
+          case Some(user:User) =>
+            Ok("test").withSession("username" -> user.username)
+          case None => BadRequest(views.html.login(User.loginForm, "Wrong username/password"))
+        }
+
+      }
+    )
   }
 
 

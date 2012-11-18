@@ -14,8 +14,8 @@ case class User(id: ObjectId = new ObjectId(),
                 fname: String,
                 lname: String,
                 username: String,
-                email: String,
-                password: String)
+                password: String,
+                email: String)
 
 object User extends ModelCompanion[User, ObjectId]{
   //because I'm so savy I had to look up dao it stands for Data Access Object
@@ -42,6 +42,10 @@ object User extends ModelCompanion[User, ObjectId]{
       .toList
   }
 
+  def login(username: String, password: String): Option[User] ={
+    dao.findOne(MongoDBObject("username" -> username, "password" -> password))
+  }
+
   val form = Form(
     mapping(
       "fname" -> text,
@@ -49,14 +53,14 @@ object User extends ModelCompanion[User, ObjectId]{
       "username" -> text,
       "password" -> text,
       "email" -> email
-    )((fname, lname, username, email, password)
+    )((fname, lname, username, password, email)
        => User(new ObjectId,
-                fname, lname, username, email, password))
+                fname, lname, username, password, email))
       ((user: User) 
-      => Some(user.fname, user.lname, user.username, user.email, user.password))
+      => Some(user.fname, user.lname, user.username, user.password, user.email))
   )
 
-  val login = Form(
+  val loginForm = Form(
     tuple(
       "username" -> text,
       "password" -> text
