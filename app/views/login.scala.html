@@ -7,5 +7,15 @@
 
   @form(routes.UserController.login) {
     <fieldset>
+      @inputText(
+        loginForm("username"), 
+        '_label -> "Username:" 
+      ) 
+
+      @inputText(
+        loginForm("password"), 
+        '_label -> "Password:" 
+      ) 
+    <input type="submit" value="Login">
   }
 }
