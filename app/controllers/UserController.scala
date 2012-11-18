@@ -43,8 +43,7 @@ object UserController extends Controller {
   }
 
   def findFreeTime = Action{implicit request =>
-    Ok('hey')
-
+    Ok("hey")
   }
 
 }

@@ -9,6 +9,9 @@ import se.radley.plugin.salat._
 import mongoContext._
 import play.api.data._
 import play.api.data.Forms._
+import org.joda.time.DateTime
+
+
 
 case class User(id: ObjectId = new ObjectId(), 
                 fname: String,
@@ -34,14 +37,26 @@ object User extends ModelCompanion[User, ObjectId]{
   }
 
   def getUserEvents(username: String) = {
+    // Joda.dateTimes.sorted
     val eventDao = new SalatDAO[Event, ObjectId](collection = mongoCollection("events")) {}
     eventDao.find(MongoDBObject("user" -> username))
-      .sort(orderBy = MongoDBObject("_id" -> -1))
-      .toList
+      .toList.sortWith(_.startDate isBefore _.startDate)
   }
 
   def login(username: String, password: String): Option[User] ={
     dao.findOne(MongoDBObject("username" -> username, "password" -> password))
+  }
+
+  def freeTime(username: String, start: DateTime, end: DateTime, 
+              latestTime: DateTime, earliestTime: DateTime, duration: Int)={
+
+    //the length of the event as a percentage of a day
+    val eventSize = 1440/duration
+    //all events of the user
+    val events = getUserEvents(username)
+
+
+
   }
 
   val form = Form(
@@ -64,4 +79,6 @@ object User extends ModelCompanion[User, ObjectId]{
     )
   )
 
+  // val free
 }
+

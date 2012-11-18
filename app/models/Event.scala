@@ -7,14 +7,16 @@ import com.novus.salat.dao._
 import com.mongodb.casbah.Imports._
 import se.radley.plugin.salat._
 import mongoContext._
-import java.util.Date
+import org.joda.time.DateTime
+import org.joda.time.format._
 import play.api.data._
 import play.api.data.Forms._
 
 
 case class Event( id: ObjectId = new ObjectId(),
                   title: String,
-                  date: Date = new Date(),
+                  startDate: DateTime = new DateTime(),
+                  endDate: DateTime = new DateTime(),
                   location: String,
                   user: String,
                   tags: List[String])
@@ -22,8 +24,8 @@ case class Event( id: ObjectId = new ObjectId(),
 object Event extends ModelCompanion[Event, ObjectId] {
   val dao = new SalatDAO[Event, ObjectId](collection = mongoCollection("events")) {}
 
-  def getByDate(date: Date): List[Event] = {
-    dao.find(MongoDBObject("date" -> date))
+  def getByStartDate(date: DateTime): List[Event] = {
+    dao.find(MongoDBObject("startDate" -> date))
       .sort(orderBy = MongoDBObject("_id" -> -1))
       .toList
   }
@@ -40,7 +42,7 @@ object Event extends ModelCompanion[Event, ObjectId] {
       .toList
   }
 
-  val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy")
+  val dateFormat: DateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy")
 
   def parseTags(tags: String): List[String] = {
     val split = tags.split(',')
@@ -54,14 +56,18 @@ object Event extends ModelCompanion[Event, ObjectId] {
   val form = Form(
     mapping(
       "title" -> text,
-      "date" -> text,
+      "startDate" -> text,
+      "endDate" -> text,
       "location" -> text,
       "user" -> text,
       "tags" -> text
-    )((title, date, location, user, tags)
-        => Event(new ObjectId , title, dateFormat.parse(date), location, user, parseTags(tags) ))
+    )((title, startDate, endDate, location, user, tags)
+        => Event(new ObjectId , title, dateFormat.parseDateTime(startDate),
+                 dateFormat.parseDateTime(endDate), location, user, parseTags(tags)))
       ((event: Event) 
-        => Some(event.title, Event.dateFormat.format(event.date), event.location, event.user, tagsToSting(event.tags)))
+        => Some(event.title, Event.dateFormat.print(event.startDate),
+               Event.dateFormat.print(event.endDate),
+               event.location, event.user, tagsToSting(event.tags)))
   )
-
 }
+
