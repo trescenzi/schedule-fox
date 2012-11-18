@@ -13,6 +13,7 @@ import play.api.data.Forms._
 
 
 case class Event( id: ObjectId = new ObjectId(),
+                  title: String,
                   date: Date = new Date(),
                   location: String,
                   user: String,
@@ -52,14 +53,15 @@ object Event extends ModelCompanion[Event, ObjectId] {
 
   val form = Form(
     mapping(
+      "title" -> text,
       "date" -> text,
       "location" -> text,
       "user" -> text,
       "tags" -> text
-    )((date, location, user, tags)
-        => Event(new ObjectId , dateFormat.parse(date), location, user, parseTags(tags) ))
+    )((title, date, location, user, tags)
+        => Event(new ObjectId , title, dateFormat.parse(date), location, user, parseTags(tags) ))
       ((event: Event) 
-        => Some( Event.dateFormat.format(event.date), event.location, event.user, tagsToSting(event.tags)))
+        => Some(event.title, Event.dateFormat.format(event.date), event.location, event.user, tagsToSting(event.tags)))
   )
 
 }
