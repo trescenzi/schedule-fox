@@ -16,7 +16,7 @@ case class Event( id: ObjectId = new ObjectId(),
                   date: Date = new Date(),
                   location: String,
                   user: String,
-                  tags: Option[List[String]] = None)
+                  tags: List[String])
 
 object Event extends ModelCompanion[Event, ObjectId] {
   val dao = new SalatDAO[Event, ObjectId](collection = mongoCollection("events")) {}
@@ -41,13 +41,13 @@ object Event extends ModelCompanion[Event, ObjectId] {
 
   val dateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy")
 
-  def parseTags(tags: String): Option[List[String]] = {
+  def parseTags(tags: String): List[String] = {
     val split = tags.split(',')
-    split map(s => s.trim)
+    split map(s => s.trim) toList
   }
 
   def tagsToSting(tags: List[String]): String = {
-    tags foldLeft("")((sting, s) string += s+",")
+    tags filter {_.nonEmpty} mkString ", "
   }
 
   val form = Form(
@@ -59,7 +59,7 @@ object Event extends ModelCompanion[Event, ObjectId] {
     )((date, location, user, tags)
         => Event(new ObjectId , dateFormat.parse(date), location, user, parseTags(tags) ))
       ((event: Event) 
-        => Some( Event.dateFormat.format(event.date), event.location, event.user, tagsToSting(event.tags) ))
+        => Some( Event.dateFormat.format(event.date), event.location, event.user, tagsToSting(event.tags)))
   )
 
 }
