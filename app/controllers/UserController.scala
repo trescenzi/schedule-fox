@@ -26,7 +26,6 @@ object UserController extends Controller {
               Ok(views.html.index("Welcome" + user.username)).withSession("username" -> user.username)
           case None => BadRequest(views.html.login(User.loginForm, "Wrong username/password"))
         }
-
       }
     )
   }
@@ -41,6 +40,11 @@ object UserController extends Controller {
           Ok(views.html.index("lets see if it worked!" + user.fname ))
       }
     )
+  }
+
+  def findFreeTime = Action{implicit request =>
+    Ok('hey')
+
   }
 
 }

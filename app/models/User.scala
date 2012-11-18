@@ -33,12 +33,10 @@ object User extends ModelCompanion[User, ObjectId]{
     dao.findOne(MongoDBObject("lname" -> lname))
   }
 
-  def getUserEvents(username: String): List[Event] = {
+  def getUserEvents(username: String) = {
     val eventDao = new SalatDAO[Event, ObjectId](collection = mongoCollection("events")) {}
-    eventDao.find(MongoDBObject("user" -> MongoDBObject("username" -> username)))
+    eventDao.find(MongoDBObject("user" -> username))
       .sort(orderBy = MongoDBObject("_id" -> -1))
-      .skip(1)
-      .limit(1)
       .toList
   }
 
@@ -67,5 +65,3 @@ object User extends ModelCompanion[User, ObjectId]{
   )
 
 }
-
-
