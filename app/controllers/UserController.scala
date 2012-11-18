@@ -23,7 +23,7 @@ object UserController extends Controller {
       user => {
         User.login(user._1, user._2) match{
           case Some(user:User) =>
-            Ok("test").withSession("username" -> user.username)
+              Ok(views.html.index("Welcome" + user.username)).withSession("username" -> user.username)
           case None => BadRequest(views.html.login(User.loginForm, "Wrong username/password"))
         }
 

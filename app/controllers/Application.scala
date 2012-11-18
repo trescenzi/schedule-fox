@@ -9,7 +9,11 @@ import play.api.data.Forms._
 object Application extends Controller {
 
   def index = Action {implicit request =>
-    Ok(views.html.index("Your new application is ready."))
+    session.get("username").map { user =>
+      Ok(views.html.index("Hello" + user))
+    }.getOrElse {
+      Ok(views.html.index("not logged in"))
+    }
   }
   
 }

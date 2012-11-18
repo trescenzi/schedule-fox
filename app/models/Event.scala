@@ -8,12 +8,14 @@ import com.mongodb.casbah.Imports._
 import se.radley.plugin.salat._
 import mongoContext._
 import java.util.Date
+import play.api.data._
+import play.api.data.Forms._
 
 
 case class Event( id: ObjectId = new ObjectId(),
                   date: Date = new Date(),
                   location: String,
-                  user: User,
+                  user: String,
                   tags: Option[List[String]] = None)
 
 object Event extends ModelCompanion[Event, ObjectId] {
@@ -37,16 +39,27 @@ object Event extends ModelCompanion[Event, ObjectId] {
       .toList
   }
 
-  // val form = Form(
-  //   mapping(
-  //     "date" -> text,
-  //     "location" -> text,
-  //     "username" -> text,
-  //   )((fname, lname, username, password, email)
-  //      => User(new ObjectId,
-  //               fname, lname, username, password, email))
-  //     ((user: User) 
-  //     => Some(user.fname, user.lname, user.username, user.password, user.email))
-  // )
+  val dateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy")
+
+  def parseTags(tags: String): Option[List[String]] = {
+    val split = tags.split(',')
+    split map(s => s.trim)
+  }
+
+  def tagsToSting(tags: List[String]): String = {
+    tags foldLeft("")((sting, s) string += s+",")
+  }
+
+  val form = Form(
+    mapping(
+      "date" -> text,
+      "location" -> text,
+      "user" -> text,
+      "tags" -> text
+    )((date, location, user, tags)
+        => Event(new ObjectId , dateFormat.parse(date), location, user, parseTags(tags) ))
+      ((event: Event) 
+        => Some( Event.dateFormat.format(event.date), event.location, event.user, tagsToSting(event.tags) ))
+  )
 
 }

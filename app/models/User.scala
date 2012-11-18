@@ -54,10 +54,9 @@ object User extends ModelCompanion[User, ObjectId]{
       "password" -> text,
       "email" -> email
     )((fname, lname, username, password, email)
-       => User(new ObjectId,
-                fname, lname, username, password, email))
+        => User(new ObjectId, fname, lname, username, password, email))
       ((user: User) 
-      => Some(user.fname, user.lname, user.username, user.password, user.email))
+        => Some(user.fname, user.lname, user.username, user.password, user.email))
   )
 
   val loginForm = Form(
