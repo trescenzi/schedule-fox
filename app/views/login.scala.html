@@ -1,9 +1,11 @@
-@(loginForm: Form[User])
+@(loginForm: Form[(String,String)])
+@import helper._
+
 
 @main("Login"){
   <h2>Login</h2>
 
-  @form(routes.User.login) {
+  @form(routes.UserController.login) {
     <fieldset>
   }
 }
