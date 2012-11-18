@@ -7,10 +7,12 @@ import com.novus.salat.dao._
 import com.mongodb.casbah.Imports._
 import se.radley.plugin.salat._
 import mongoContext._
+import play.api.data._
+import play.api.data.Forms._
 
 case class User(id: ObjectId = new ObjectId(), 
-                firstName: String,
-                lastName: String,
+                fname: String,
+                lname: String,
                 username: String,
                 email: String,
                 password: String)
@@ -23,6 +25,14 @@ object User extends ModelCompanion[User, ObjectId]{
       dao.findOne(MongoDBObject("username" -> username))
     }
 
+    def getByfname(fname: String): Option[User] = {
+      dao.findOne(MongoDBObject("fname" -> fname))
+    }
+
+    def getByLname(lname: String): Option[User] = {
+      dao.findOne(MongoDBObject("lname" -> lname))
+    }
+
     def getUserEvents(username: String): List[Event] = {
       val eventDao = new SalatDAO[Event, ObjectId](collection = mongoCollection("events")) {}
       eventDao.find(MongoDBObject("user" -> MongoDBObject("username" -> username)))
@@ -32,4 +42,20 @@ object User extends ModelCompanion[User, ObjectId]{
         .toList
     }
 
+    val form = Form(
+    mapping(
+      "fname" -> text,
+      "lname" -> text,
+      "username" -> text,
+      "password" -> text,
+      "email" -> email
+    )((fname, lname, username, password, email)
+       => User(new ObjectId,
+                fname, lname, username, password, email))
+      ((user: User) 
+      => Some(user.fname, user.lname, user.username, user.password, user.email))
+  )
+
 }
+
+

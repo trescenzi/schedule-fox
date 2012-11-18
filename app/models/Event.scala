@@ -11,7 +11,7 @@ import java.util.Date
 
 
 case class Event( id: ObjectId = new ObjectId(),
-                  date: Option[Date] = None,
+                  date: Date = new Date(),
                   location: String,
                   user: User,
                   tags: Option[List[String]] = None)
@@ -36,5 +36,17 @@ object Event extends ModelCompanion[Event, ObjectId] {
       .sort(orderBy = MongoDBObject("_id" -> -1))
       .toList
   }
+
+  // val form = Form(
+  //   mapping(
+  //     "date" -> text,
+  //     "location" -> text,
+  //     "username" -> text,
+  //   )((fname, lname, username, password, email)
+  //      => User(new ObjectId,
+  //               fname, lname, username, password, email))
+  //     ((user: User) 
+  //     => Some(user.fname, user.lname, user.username, user.password, user.email))
+  // )
 
 }

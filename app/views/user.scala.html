@@ -1,15 +1,39 @@
-@(userForm: Form[(String, String)])
+@(userForm: Form[User])
+
+@import models._
 @import helper._
 
 @main("New User"){
   <h2>Add a new user</h2>
     
   @form(routes.Application.newUser) {
-      
-      @inputText(userForm("username")) 
-      @inputText(userForm("password"))
+      <fieldset>
+        <legend> Create a new account </legend>
+          
+          @inputText(
+            userForm("fname"), 
+            '_label -> "First Name:" 
+          )
 
+          @inputText(
+            userForm("lname"), 
+            '_label -> "Last Name:" 
+          )
+
+          @inputText(
+            userForm("username"), 
+            '_label -> "Username:" 
+          )
+
+          @inputText(
+            userForm("password"),
+            '_label -> "Password:"
+          )
+
+          @inputText(
+            userForm("email"),
+            '_label -> "Email:"
+          )
       <input type="submit" value="Create">
-      
   }
 }

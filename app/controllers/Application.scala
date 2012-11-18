@@ -7,37 +7,34 @@ import play.api.data._
 import play.api.data.Forms._
 
 object Application extends Controller {
-    
-  val userForm = Form(
-    tuple(
-      "username" -> nonEmptyText,
-      "password" -> nonEmptyText
-    )
-  )
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
   }
   
   def user = Action{
-    Ok(views.html.user(userForm))
+    Ok(views.html.user())
   }
 
   def newUser = Action{ implicit request =>
 
-    userForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.user(errors)),
+    User.form.bindFromRequest.fold(
+      errors => BadRequest(views.html.user()),
       user => {
         User.save(
           User(
-            firstName = "hey",
-            lastName = "bob",
-            username = user._1,
-            password = user._2,
-            email = "hello@sex.com"
+            fname = user.fname,
+            lname = user.lname,
+            username = user.username,
+            password = user.password,
+            email = user.email
           )
         )
-        Ok(views.html.index(user._1))
+        User.getByUsername(user.username) match {
+          case Some(user:User) => Ok(views.html.index("lets see if it worked!" + user.fname ))
+          case None => Ok(views.html.index("it's borked"))
+        }
+        
       }
     )
   }
