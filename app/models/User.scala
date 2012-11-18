@@ -10,6 +10,7 @@ import mongoContext._
 import play.api.data._
 import play.api.data.Forms._
 import org.joda.time.DateTime
+import org.joda.time.Interval
 
 
 
@@ -40,7 +41,7 @@ object User extends ModelCompanion[User, ObjectId]{
     // Joda.dateTimes.sorted
     val eventDao = new SalatDAO[Event, ObjectId](collection = mongoCollection("events")) {}
     eventDao.find(MongoDBObject("user" -> username))
-      .toList.sortWith(_.startDate isBefore _.startDate)
+      .toList.sortWith(_.startDate < _.startDate)
   }
 
   def login(username: String, password: String): Option[User] ={
@@ -48,10 +49,7 @@ object User extends ModelCompanion[User, ObjectId]{
   }
 
   def freeTime(username: String, start: DateTime, end: DateTime, 
-              latestTime: DateTime, earliestTime: DateTime, duration: Int)={
-
-    //the length of the event as a percentage of a day
-    val eventSize = 1440/duration
+              latestTime: DateTime, earliestTime: DateTime, duration: Interval)={
     //all events of the user
     val events = getUserEvents(username)
 

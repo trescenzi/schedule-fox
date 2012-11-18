@@ -9,14 +9,15 @@ import se.radley.plugin.salat._
 import mongoContext._
 import org.joda.time.DateTime
 import org.joda.time.format._
+import org.joda.time.Instant
 import play.api.data._
 import play.api.data.Forms._
 
 
 case class Event( id: ObjectId = new ObjectId(),
                   title: String,
-                  startDate: DateTime = new DateTime(),
-                  endDate: DateTime = new DateTime(),
+                  startDate: Long,
+                  endDate: Long,
                   location: String,
                   user: String,
                   tags: List[String])
@@ -25,7 +26,7 @@ object Event extends ModelCompanion[Event, ObjectId] {
   val dao = new SalatDAO[Event, ObjectId](collection = mongoCollection("events")) {}
 
   def getByStartDate(date: DateTime): List[Event] = {
-    dao.find(MongoDBObject("startDate" -> date))
+    dao.find(MongoDBObject("startDate" -> date.toInstant))
       .sort(orderBy = MongoDBObject("_id" -> -1))
       .toList
   }
@@ -62,12 +63,13 @@ object Event extends ModelCompanion[Event, ObjectId] {
       "user" -> text,
       "tags" -> text
     )((title, startDate, endDate, location, user, tags)
-        => Event(new ObjectId , title, dateFormat.parseDateTime(startDate),
-                 dateFormat.parseDateTime(endDate), location, user, parseTags(tags)))
+        => Event(new ObjectId , title, startDate.toLong,
+                 endDate.toLong, location, user, parseTags(tags)))
       ((event: Event) 
-        => Some(event.title, Event.dateFormat.print(event.startDate),
-               Event.dateFormat.print(event.endDate),
-               event.location, event.user, tagsToSting(event.tags)))
+        => Some(event.title, event.startDate.toString, event.endDate.toString,
+                event.location, event.user, tagsToSting(event.tags)))
   )
 }
+// event.title, event.startDate, event.endDate,
+//                event.location, event.user, tagsToSting(event.tags)
 
