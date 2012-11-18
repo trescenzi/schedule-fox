@@ -21,39 +21,46 @@ object User extends ModelCompanion[User, ObjectId]{
   //because I'm so savy I had to look up dao it stands for Data Access Object
   val dao = new SalatDAO[User, ObjectId](collection = mongoCollection("users")) {}
 
-    def getByUsername(username: String): Option[User] = {
-      dao.findOne(MongoDBObject("username" -> username))
-    }
+  def getByUsername(username: String): Option[User] = {
+    dao.findOne(MongoDBObject("username" -> username))
+  }
 
-    def getByfname(fname: String): Option[User] = {
-      dao.findOne(MongoDBObject("fname" -> fname))
-    }
+  def getByfname(fname: String): Option[User] = {
+    dao.findOne(MongoDBObject("fname" -> fname))
+  }
 
-    def getByLname(lname: String): Option[User] = {
-      dao.findOne(MongoDBObject("lname" -> lname))
-    }
+  def getByLname(lname: String): Option[User] = {
+    dao.findOne(MongoDBObject("lname" -> lname))
+  }
 
-    def getUserEvents(username: String): List[Event] = {
-      val eventDao = new SalatDAO[Event, ObjectId](collection = mongoCollection("events")) {}
-      eventDao.find(MongoDBObject("user" -> MongoDBObject("username" -> username)))
-        .sort(orderBy = MongoDBObject("_id" -> -1))
-        .skip(1)
-        .limit(1)
-        .toList
-    }
+  def getUserEvents(username: String): List[Event] = {
+    val eventDao = new SalatDAO[Event, ObjectId](collection = mongoCollection("events")) {}
+    eventDao.find(MongoDBObject("user" -> MongoDBObject("username" -> username)))
+      .sort(orderBy = MongoDBObject("_id" -> -1))
+      .skip(1)
+      .limit(1)
+      .toList
+  }
 
-    val form = Form(
+  val form = Form(
     mapping(
       "fname" -> text,
       "lname" -> text,
       "username" -> text,
       "password" -> text,
       "email" -> email
-    )((fname, lname, username, password, email)
+    )((fname, lname, username, email, password)
        => User(new ObjectId,
-                fname, lname, username, password, email))
+                fname, lname, username, email, password))
       ((user: User) 
-      => Some(user.fname, user.lname, user.username, user.password, user.email))
+      => Some(user.fname, user.lname, user.username, user.email, user.password))
+  )
+
+  val login = Form(
+    tuple(
+      "username" -> text,
+      "password" -> text
+    )
   )
 
 }

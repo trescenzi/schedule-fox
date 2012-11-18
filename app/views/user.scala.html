@@ -1,4 +1,4 @@
-@(userForm: Form[User])
+@(userForm: Form[User] = User.form)
 
 @import models._
 @import helper._
@@ -6,7 +6,7 @@
 @main("New User"){
   <h2>Add a new user</h2>
     
-  @form(routes.Application.newUser) {
+  @form(routes.User.newUser) {
       <fieldset>
         <legend> Create a new account </legend>
           
